@@ -225,11 +225,11 @@ def create_standalone_html(
         html = re.sub(r"\s+on\w+='[^']*'", '', html, flags=re.IGNORECASE)
 
     # 2. Lazy-Load Attribute konvertieren (data-src -> src, data-srcset -> srcset)
-    lazy_attrs = ['data-src', 'data-lazy-src', 'data-original', 'data-lazy']
+    lazy_attrs = ['data-src', 'data-lazy-src', 'data-original', 'data-lazy', 'data-iesrc']
     for attr in lazy_attrs:
-        # Für Bilder ohne src oder mit Placeholder-src
+        # Für img und picture Tags ohne src oder mit Placeholder-src
         html = re.sub(
-            rf'(<img[^>]*?)(?:\s+src=["\'][^"\']*["\'])?\s+{attr}=["\']([^"\']+)["\']([^>]*>)',
+            rf'(<(?:img|picture)[^>]*?)(?:\s+src=["\'][^"\']*["\'])?\s+{attr}=["\']([^"\']+)["\']([^>]*>)',
             r'\1 src="\2"\3',
             html,
             flags=re.IGNORECASE
@@ -307,9 +307,9 @@ def create_standalone_html(
                         errors.append(f"CSS nicht geladen: {href} - {content_type}")
                         stats['resources_failed'] += 1
     
-    # 4. Bilder verarbeiten (<img src>)
+    # 4. Bilder verarbeiten (<img src> und <picture src>)
     if assets_mode != 'hotlink':
-        img_pattern = r'(<img[^>]+src=)(["\'])([^"\']+)(\2[^>]*>)'
+        img_pattern = r'(<(?:img|picture)[^>]+src=)(["\'])([^"\']+)(\2[^>]*>)'
 
         def replace_image(match):
             prefix = match.group(1)

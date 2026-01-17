@@ -26,3 +26,5 @@ env/
 
 # Claude
 .claude/
+CLAUDE.md
+todo.md
